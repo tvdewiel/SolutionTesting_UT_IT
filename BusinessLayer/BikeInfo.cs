@@ -15,5 +15,20 @@
         public BikeType BikeType { get; set; }
         public double PurchaseCost { get; set; }
         public (int id, string description) Customer { get; set; }//description : name (email)
+
+        public override bool Equals(object? obj)
+        {
+            return obj is BikeInfo info &&
+                   Id == info.Id &&
+                   Description == info.Description &&
+                   BikeType == info.BikeType &&
+                   PurchaseCost == info.PurchaseCost &&
+                   Customer.Equals(info.Customer);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, Description, BikeType, PurchaseCost, Customer);
+        }
     }
 }
