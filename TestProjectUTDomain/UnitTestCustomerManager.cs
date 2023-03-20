@@ -31,6 +31,7 @@ namespace TestProjectUTDomain
         [Fact]
         public void Test_UpdateBike_Valid()
         {
+            //na update moet de bike van de customer geupdate zijn
             BikeInfo biOld = new BikeInfo(5, "blue bike", BikeType.childBike, 10, "jos(jos@gmail)", 120);
             BikeInfo biNew = new BikeInfo(5, "green bike", BikeType.racingBike, 10, "jos(jos@gmail)", 180);
             Bike bikeOld=DomainFactory.NewBike(biOld);

@@ -43,8 +43,8 @@ namespace TestProjectIntegrationTest
             this.fixture = fixture;
             customerManager = new CustomerManager(fixture.customerRepository);
         }
-        [Fact, Priority(2)]
-        public void ZTest()
+        [Fact, Priority(1)]
+        public void Test_AddBike_Valid()
         {
             //Test();
             string description = "green bike";
@@ -61,7 +61,7 @@ namespace TestProjectIntegrationTest
             Assert.Contains(bikeInfo, bDB);
         }
         [Fact, Priority(0)]
-        public void Test()
+        public void Test_AddCustomer_Valid()
         {
             string name = "jos";
             string email = "jos@gmail";
@@ -74,17 +74,17 @@ namespace TestProjectIntegrationTest
             Assert.Equal(name, cDB.Name);
             Assert.Equal(address, cDB.Address);
         }
-        [Fact, Priority(1)]
-        public void bTest()
+        [Fact, Priority(2)]
+        public void Test_UpdateBike()
         {
             string description = "blue bike";
-            BikeType bikeType = BikeType.racingBike;
+            BikeType bikeType = BikeType.childBike;
             int customerId = 1;
             string customerDescription = "jos (jos@gmail)";
-            double purchaseCost = 175;
-            BikeInfo bikeInfo = new BikeInfo(null, description, bikeType, customerId, customerDescription, purchaseCost);
+            double purchaseCost = 75;
+            BikeInfo bikeInfo = new BikeInfo(1, description, bikeType, customerId, customerDescription, purchaseCost); //id gekend eerste fiets
 
-            customerManager.AddBike(bikeInfo);
+            customerManager.UpdateBike(bikeInfo);
             var bDB = customerManager.GetBikesInfo();
 
             Assert.NotNull(bDB);
