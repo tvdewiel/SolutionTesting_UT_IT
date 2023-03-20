@@ -8,7 +8,7 @@ namespace TestProjectIntegrationTest
     public class DatabaseFixture : IDisposable
     {
         private string connString = @"Data Source=NB21-6CDPYD3\SQLEXPRESS;Initial Catalog=BikeRepairShopTestDB;Integrated Security=True";
-
+        public CustomerRepositoryHelper dbHelper;
         private void CleanDB()
         {
             string clearDB = "DELETE FROM Bike;DBCC CHECKIDENT ('Bike', RESEED, 0); DELETE FROM Customer; DBCC CHECKIDENT ('Customer', RESEED, 0)";
@@ -24,6 +24,7 @@ namespace TestProjectIntegrationTest
         {            
             CleanDB();
             customerRepository = new CustomerRepositoryADO(connString);
+            dbHelper = new CustomerRepositoryHelper(connString);
             // ... initialize data in the test database ...
         }
         public void Dispose()
@@ -33,12 +34,12 @@ namespace TestProjectIntegrationTest
         public ICustomerRepository customerRepository { get; private set; }
     }
     [TestCaseOrderer(PriorityOrderer.Name, PriorityOrderer.Assembly)]
-    public class TestCustomerRepository : IClassFixture<DatabaseFixture>
+    public class TestCustomerManager : IClassFixture<DatabaseFixture>
     {
         DatabaseFixture fixture;
         CustomerManager customerManager;
 
-        public TestCustomerRepository(DatabaseFixture fixture)
+        public TestCustomerManager(DatabaseFixture fixture)
         {
             this.fixture = fixture;
             customerManager = new CustomerManager(fixture.customerRepository);
@@ -89,6 +90,21 @@ namespace TestProjectIntegrationTest
 
             Assert.NotNull(bDB);
             Assert.Contains(bikeInfo, bDB);
+        }
+        [Fact, Priority(3)]
+        public void Test_DeleteBike()
+        {
+            string description = "blue bike";
+            BikeType bikeType = BikeType.childBike;
+            int customerId = 1;
+            string customerDescription = "jos (jos@gmail)";
+            double purchaseCost = 75;
+            BikeInfo bikeInfo = new BikeInfo(1, description, bikeType, customerId, customerDescription, purchaseCost); //id gekend eerste fiets
+            customerManager.DeleteBike(bikeInfo);
+            var customerDB = customerManager.GetCustomer(customerId);
+            Assert.DoesNotContain(DomainFactory.ExistingBike(1,bikeType,purchaseCost,description), customerDB.Bikes());
+            Assert.DoesNotContain(bikeInfo, customerManager.GetBikesInfo());
+            Assert.Equal(0, fixture.dbHelper.StatusBike((int)bikeInfo.Id));
         }
     }
 }
