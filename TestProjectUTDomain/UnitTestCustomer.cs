@@ -5,6 +5,12 @@ namespace TestProjectUTDomain
 {
     public class UnitTestCustomer
     {
+        private Customer customerValid;
+
+        public UnitTestCustomer()
+        {
+            customerValid = new Customer("jos", "jos@gmail", "9000 Gent");
+        }
         [Fact]
         public void Test_ctor_Valid()
         {
@@ -60,6 +66,22 @@ namespace TestProjectUTDomain
             Assert.Single(c.Bikes());
             Assert.Throws<DomainException>(() => c.AddBike(bike2));
             Assert.Single(c.Bikes());           
+        }
+        [Fact]
+        public void Test_AddBike_null_InValid()
+        {
+            Assert.Throws<DomainException>(() => customerValid.AddBike(null));
+        }
+        [Fact]
+        public void Test_AddBike_DuplicateBike_InValid()
+        {
+            Bike bike1 = DomainFactory.NewBike(new BikeInfo(null, "blue bike", BikeType.regularBike, 10, "jos (jos@gmail)", 250));
+            Bike bike2 = DomainFactory.NewBike(new BikeInfo(null, "blue bike", BikeType.regularBike, 10, "jos (jos@gmail)", 250));
+            Assert.Empty(customerValid.Bikes());
+            customerValid.AddBike(bike1);
+            Assert.Throws<DomainException>(() => customerValid.AddBike(bike2));
+            Assert.Single(customerValid.Bikes());
+            Assert.Contains(bike2, customerValid.Bikes());
         }
     }
 }
